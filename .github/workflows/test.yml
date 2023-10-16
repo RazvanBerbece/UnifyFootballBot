@@ -37,7 +37,7 @@ jobs:
       - name: Test
         run: go test ./internal/...
       
-  release:
+  generate-release:
     needs: build
     uses: ./.github/workflows/release.yml
     secrets: inherit
