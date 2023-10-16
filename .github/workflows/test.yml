@@ -1,0 +1,42 @@
+# This file orchestrates the release workflow of this repository (creating, bumping and pushing tags into releases, etc.)
+
+name: test
+
+on:
+  push:
+    branches: [ 'main' ]
+  pull_request:
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        go-version: [ '1.19', '1.20', '1.21.x' ]
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Go ${{ matrix.go-version }}
+        uses: actions/setup-go@v4
+        with:
+          go-version: ${{ matrix.go-version }}
+
+      - name: Display Go version
+        run: go version
+      
+      - name: Setup environment
+        run: |
+          touch .env
+          echo DISCORD_BOT_TOKEN=${{ secrets.DISCORD_BOT_TOKEN }} >> .env
+          echo APP_ID=${{ secrets.APP_ID }} >> .env
+      
+      - name: Install dependencies
+        run: |
+          go get .
+      
+      - name: Build
+        run: go build -o build ./cmd/...
+      
+      - test: Test
+        run: go test ./internal/...
