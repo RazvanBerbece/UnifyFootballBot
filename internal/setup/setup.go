@@ -26,4 +26,5 @@ func Setup(filepathToEnv string) RuntimeEnvironment {
 	}
 
 	return env
+
 }
