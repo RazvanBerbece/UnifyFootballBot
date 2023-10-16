@@ -14,7 +14,7 @@ func Pong(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 	// If the message is "pong" reply with "Ping!"
 	if m.Content == "pong" {
-		logger.LogHandlerCall("Pong", "../../logs", "/handler_calls.log")
+		logger.LogHandlerCall("Pong", "logs/", "/handler_calls.log")
 		s.ChannelMessageSend(m.ChannelID, "Ping!")
 	}
 }
