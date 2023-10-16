@@ -31,12 +31,8 @@ jobs:
           echo DISCORD_BOT_TOKEN=${{ secrets.DISCORD_BOT_TOKEN }} >> .env
           echo APP_ID=${{ secrets.APP_ID }} >> .env
       
-      - name: Install dependencies
-        run: |
-          go get .
-      
       - name: Build
-        run: go build -o build ./cmd/...
+        run: go build -o build ./cmd/... && go build ./internal/...
       
       - name: Test
         run: go test ./internal/...
