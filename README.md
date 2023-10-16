@@ -16,7 +16,7 @@ The extensible, fast and reliable Discord bot which powers the UnifyFootball.ro 
 # CI/CD
 ## CI
 Continuous integration is implemented via a workflow leveraging Github Actions. The workflow uses Go's build and testing CLI to run the
-automated test harness against various versions of Go.
+automated test harness against various versions of Go. The source file for the CI flow can be seen in [test.yml](.github/workflows/test.yml)
 
 ### Run CI Locally
 I took the opportunity to try out Act (https://github.com/nektos/act) for this project and to my surprise it was really easy to setup and use. In order to be able to run the workflows locally, one must have Act installed on the host machine (check the guide here https://github.com/nektos/act#installation). 
