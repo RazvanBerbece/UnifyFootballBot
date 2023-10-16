@@ -22,8 +22,15 @@ automated test harness against various versions of Go.
 I took the opportunity to try out Act (https://github.com/nektos/act) for this project and to my surprise it was really easy to setup and use. In order to be able to run the workflows locally, one must have Act installed on the host machine (check the guide here https://github.com/nektos/act#installation). 
 
 #### Steps to run the workflows using Act:
-1. In dry-run mode (don't create any containers and will validate workflow file syntax and correctness): `act -n -s GH_TOKEN=github_token_here -s DISCORD_BOT_TOKEN=discord_token_here -s APP_ID=app_id_here`
-2. Or not in dry-run mode (just drop the `-n` flag): `act -s GH_TOKEN=github_token_here -s DISCORD_BOT_TOKEN=discord_token_here -s APP_ID=app_id_here`
+1. In dry-run mode (don't create any containers and will validate workflow file syntax and correctness)
+```shell
+act -n -s GH_TOKEN=github_token_here -s DISCORD_BOT_TOKEN=discord_token_here -s APP_ID=app_id_here
+```
+
+2. Or not in dry-run mode (just drop the `-n` flag)
+```shell
+act -s GH_TOKEN=github_token_here -s DISCORD_BOT_TOKEN=discord_token_here -s APP_ID=app_id_here
+```
 
 # Credits
 fhatti (https://github.com/fhatti) for coming up with the feature ideas.
