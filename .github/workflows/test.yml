@@ -42,5 +42,5 @@ jobs:
         run: go test ./internal/...
       
   release:
-    uses: github.com/RazvanBerbece/.github/workflows/release.yml@main
+    uses: ./.github/workflows/release.yml
     secrets: inherit
