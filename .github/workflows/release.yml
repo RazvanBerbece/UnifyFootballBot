@@ -3,9 +3,10 @@
 name: release
 
 on:
-  push:
-    branches: [ 'main' ]
-
+  workflow_call:
+    secrets:
+      GH_TOKEN:
+        required: true
   workflow_dispatch:
 
 jobs:

@@ -8,8 +8,8 @@ on:
   pull_request:
 
 jobs:
-  build:
 
+  build:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -40,3 +40,7 @@ jobs:
       
       - name: Test
         run: go test ./internal/...
+      
+  release:
+    uses: github.com/RazvanBerbece/.github/workflows/release.yml@main
+    secrets: inherit
