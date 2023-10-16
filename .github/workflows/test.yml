@@ -38,5 +38,5 @@ jobs:
       - name: Build
         run: go build -o build ./cmd/...
       
-      - test: Test
+      - name: Test
         run: go test ./internal/...
