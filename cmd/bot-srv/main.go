@@ -8,7 +8,7 @@ import (
 
 func main() {
 
-	// Setup Runtime Environment
+	// Retrieve the configured runtime environment
 	env := setup.Setup(".env")
 
 	// Configure DiscordGo base
