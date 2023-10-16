@@ -2,6 +2,12 @@
 The extensible, fast and reliable Discord bot which powers the UnifyFootball.ro online community. Written in Go.
 
 # How to Run
+## Prerequisites
+1. Bot has to be added as an app to the Discord server.
+2. The `.env` file has to be created in this repo and populated with the correct key-value pairs (`DISCORD_BOT_TOKEN=...`, `APP_ID=...`)
+3. Have the Go SDK installed.
+4. (Optional) Have Docker installed.
+
 ## On host machine
 1. Build the project by running the `go build -o build ./cmd/...` command at the root of the repo.
 2. Start the bot application by running the `./build/bot-srv` command at the root of the repo.
@@ -36,4 +42,4 @@ act -s GH_TOKEN=github_token_here -s DISCORD_BOT_TOKEN=discord_token_here -s APP
 Continuous deployment has not been implemented yet, as this is currently a POC. But it will leverage GitHub Actions the same way the CI step does, either by pushing packages to something like Octopus, or by directly deploying to a Cloud provider.
 
 # Credits
-fhatti (https://github.com/fhatti) for coming up with the feature ideas.
+fhatti (https://github.com/fhatti) for coming up with the project in the first place and the feature ideas.
