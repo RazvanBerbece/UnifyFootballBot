@@ -1,4 +1,4 @@
-package messageevent
+package joinserverevent
 
 import (
 	"fmt"
