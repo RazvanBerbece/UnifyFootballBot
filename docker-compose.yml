@@ -12,6 +12,8 @@ services:
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     ports:
       - "3306:3306"
+    volumes:
+      - .docker/setup.sql:/docker-entrypoint-initdb.d/setup.sql
   
   bot-app:
     container_name: bot-app
@@ -19,6 +21,3 @@ services:
       context: .
     volumes: 
       - "./logs:/app/logs"
-
-volumes:
-  mysql-db:

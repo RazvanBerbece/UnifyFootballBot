@@ -36,7 +36,8 @@ func (b *DiscordGoBase) ConfigureBase(withToken string, handlers []interface{}) 
 	}
 
 	// Register intents
-	session.Identify.Intents = discordgo.IntentsGuildMessages
+	intents := discordgo.IntentsGuilds | discordgo.IntentsGuildMessages | discordgo.IntentsGuildMessageReactions
+	session.Identify.Intents = intents
 
 	b.botSession = session
 

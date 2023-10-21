@@ -17,8 +17,8 @@ The extensible, fast and reliable Discord bot which powers the UnifyFootball.ro 
 2. Run the container with the `docker run unify-bot-app` command at the root of the repo.
 
 ## Run the entire stack
-1. Run the full container app composition (app, DBs, etc.) with the `docker compose up -d` command
-2. To connect to the database using the `mysql` client, use this command after step `1` has completed : `mysql -h 0.0.0.0 -P 3306 -u root -p`, where the value passed to the flag `-p` is the user password to connect to the MySQL server (`MYSQL_PASSWORD`)
+1. Run the full container app composition (app, DBs, etc.) with the `docker compose up -d --remove-orphans` command.
+2. Bring down the application by running `docker compose down`.
 
 # How to Test
 1. Run all the tests for the project by running the `go test ./internal/...` command at the root of the repo.

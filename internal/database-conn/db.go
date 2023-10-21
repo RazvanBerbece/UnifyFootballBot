@@ -10,21 +10,12 @@ import (
 
 type Database struct {
 	cfg mysql.Config
+	Db  *sql.DB
 }
 
-func (d *Database) ConfigureConn() {
-	d.cfg = mysql.Config{
-		User:   os.Getenv("MYSQL_USER"),
-		Passwd: os.Getenv("MYSQL_PASSWORD"),
-		Net:    "tcp",
-		Addr:   "127.0.0.1:3306",
-		DBName: os.Getenv("MYSQL_DATABASE"),
-	}
-}
+func (d *Database) ConnectDatabaseHandle() {
 
-func (d *Database) GetDatabaseHandle() *sql.DB {
-
-	db, err := sql.Open("mysql", d.cfg.FormatDSN())
+	db, err := sql.Open("mysql", os.Getenv("UNIFYFOOTBALL_DB_CONNSTRING"))
 	if err != nil {
 		log.Fatal("Connection to database cannot be established :", err)
 	}
@@ -34,5 +25,6 @@ func (d *Database) GetDatabaseHandle() *sql.DB {
 		log.Fatal("Database cannot be reached :", pingErr)
 	}
 
-	return db
+	d.Db = db
+
 }
