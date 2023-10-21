@@ -13,7 +13,7 @@ func NewMember(s *discordgo.Session, event *discordgo.GuildMemberAdd) {
 
 	// event.GuildID contains the ID of the guild (server) the event occurred in.
 	// event.User contains information about the new member who joined the server.
-	logger.LogHandlerCall(fmt.Sprintf("NewMember (%s joined %s)", event.User.Username, event.GuildID), "logs/", "handler_calls.log")
+	logger.LogHandlerCall(fmt.Sprintf("NewMember (%s joined %s)", event.User.Username, event.GuildID), "")
 
 	_, err := s.Guild(event.GuildID)
 	if err != nil {

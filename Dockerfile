@@ -15,5 +15,8 @@ COPY . ./
 # Build project
 RUN CGO_ENABLED=0 GOOS=linux go build -o build ./cmd/...
 
+# Other configs
+VOLUME /app/logs
+
 # Run application
 CMD ["./build/bot-srv"]

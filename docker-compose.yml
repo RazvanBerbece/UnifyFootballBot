@@ -17,6 +17,8 @@ services:
     container_name: bot-app
     build:
       context: .
+    volumes: 
+      - "./logs:/app/logs"
 
 
 volumes:

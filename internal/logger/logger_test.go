@@ -10,13 +10,13 @@ import (
 func TestLogHandlerCall(t *testing.T) {
 
 	// Arrange
-	LogHandlerCall("TestHandlerCall", "../../logs/tmp", "/TEST_handler_calls.log")
+	LogHandlerCall("TestHandlerCall", "TEST_handler_calls.log")
 
 	// Assert
 	logsPattern := `\d{4}/\d{2}/\d{2} \d{2}:\d{2}:\d{2} (\w+)`
 	regex := regexp.MustCompile(logsPattern)
 	// Open the .log file
-	file, err := os.Open("../../logs/tmp" + "/TEST_handler_calls.log")
+	file, err := os.Open("logs/" + "TEST_handler_calls.log")
 	if err != nil {
 		t.Error("Error:", err)
 	}
@@ -40,8 +40,8 @@ func TestLogHandlerCall(t *testing.T) {
 		t.Error("Error during scanning:", err)
 	}
 
-	// Cleanup
-	e := os.Remove("../../logs/tmp" + "/TEST_handler_calls.log")
+	// Cleanup test files generated in the logger package
+	e := os.RemoveAll("logs/")
 	if e != nil {
 		t.Error("Could not cleanup after test.")
 	}
