@@ -13,7 +13,7 @@ RUN go mod download
 COPY . ./
 
 # Build project
-RUN CGO_ENABLED=0 GOOS=linux go build -o build ./cmd/...
+RUN CGO_ENABLED=0 GOOS=linux go build -o build ./cmd/... && go build ./internal/...
 
 # Other configs
 VOLUME /app/logs

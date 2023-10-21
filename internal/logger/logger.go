@@ -45,6 +45,25 @@ func LogSentMessage(handlerName string, message string) {
 
 	log.SetOutput(file)
 
-	log.Printf("Handler %s sent message \"%s\"", handlerName, message)
+	log.Printf("Handler %s sent message \"%q\"", handlerName, message)
+
+}
+
+func LogAddReaction(handlerName string, messageId string, emojiId string) {
+
+	// If the file and/or path doesn't exist, create, or append to the file
+	pathToLogfile := filepath.Join(".", "logs/")
+	err := os.MkdirAll(pathToLogfile, os.ModePerm)
+	if err != nil {
+		log.Fatal("Could not create filepath for Handler calls log file. Err =", err)
+	}
+	file, err := os.OpenFile("logs/added_reactions.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
+	if err != nil {
+		log.Fatal("Could not open log file for added reactions. Err =", err)
+	}
+
+	log.SetOutput(file)
+
+	log.Printf("Handler %s added reaction with ID \"%s\" to message with ID %s", handlerName, emojiId, messageId)
 
 }

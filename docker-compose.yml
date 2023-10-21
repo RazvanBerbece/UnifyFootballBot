@@ -20,6 +20,5 @@ services:
     volumes: 
       - "./logs:/app/logs"
 
-
 volumes:
-  my-db:
+  mysql-db:
