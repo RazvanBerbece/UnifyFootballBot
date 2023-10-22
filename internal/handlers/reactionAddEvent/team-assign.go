@@ -6,16 +6,32 @@ import (
 
 	"github.com/bwmarrin/discordgo"
 
+	"github.com/RazvanBerbece/UnifyFootballBot/internal/globals"
+	"github.com/RazvanBerbece/UnifyFootballBot/internal/logger"
+
 	favouriteTeamsRepository "github.com/RazvanBerbece/UnifyFootballBot/internal/data/favourite-teams"
 )
 
 func MessageReactionAddTeamAssign(s *discordgo.Session, event *discordgo.MessageReactionAdd) {
 
+	// Only use this handler function in the team assignment channel
+	if event.ChannelID != globals.TeamAssignChannelId {
+		return
+	}
+
 	userId := event.MessageReaction.UserID
 
+	// If bot added reaction, simply return
+	if userId == os.Getenv("BOT_USER_ID") {
+		return
+	}
+
+	logger.LogHandlerCall("MessageReactionAddTeamAssign", "")
+
 	// Only execute if user hasn't been assigned a favourite team
-	if userHasFavouritedTeam(userId) {
-		// TODO: And revert reaction + message to user about conditions to assign teams ?
+	if UserHasFavouritedTeam(userId) {
+		// Revert current reaction to enforce 1 favourite team per user
+		revertFavouriteTeamAssignment(s, event.MessageReaction.MessageID, event.MessageReaction.Emoji.Name, userId)
 		return
 	}
 
@@ -33,7 +49,6 @@ func MessageReactionAddTeamAssign(s *discordgo.Session, event *discordgo.Message
 			// Then gather the user and team data
 			reaction := event.MessageReaction.Emoji
 			teamName := reaction.Name
-			fmt.Printf("User with ID %s reacted to message with emoji %s\n", userId, teamName)
 			// Store favourite team name for given user to DB
 			repo := favouriteTeamsRepository.NewFavouriteTeamsRepository()
 			_, err := repo.InsertFavouriteTeam(userId, teamName)
@@ -45,7 +60,7 @@ func MessageReactionAddTeamAssign(s *discordgo.Session, event *discordgo.Message
 
 }
 
-func userHasFavouritedTeam(userId string) bool {
+func UserHasFavouritedTeam(userId string) bool {
 	repo := favouriteTeamsRepository.NewFavouriteTeamsRepository()
 	team, err := repo.GetFavouriteTeam(userId)
 	if err != nil {
@@ -55,4 +70,32 @@ func userHasFavouritedTeam(userId string) bool {
 		return true
 	}
 	return false
+}
+
+func revertFavouriteTeamAssignment(session *discordgo.Session, reactionMessageId string, teamName string, userId string) {
+
+	// Get the message object from the channel
+	msg, err := session.ChannelMessage(os.Getenv("TEAM_ASSIGN_CHANNEL_ID"), reactionMessageId)
+	if err != nil {
+		fmt.Println("Error retrieving message: ", err)
+		return
+	}
+	// Loop through the reactions on the message to find the specific user reaction to remove
+	for _, reaction := range msg.Reactions {
+		if reaction.Emoji.Name == teamName {
+			// Remove the reaction
+			emojiId := fmt.Sprintf("%s:%s", reaction.Emoji.Name, reaction.Emoji.ID)
+			err := session.MessageReactionRemove(
+				os.Getenv("TEAM_ASSIGN_CHANNEL_ID"),
+				reactionMessageId,
+				emojiId,
+				userId,
+			)
+			if err != nil {
+				fmt.Println("Error removing reaction: ", err)
+			}
+		}
+	}
+
+	// + message to user about conditions to assign teams ?
 }
