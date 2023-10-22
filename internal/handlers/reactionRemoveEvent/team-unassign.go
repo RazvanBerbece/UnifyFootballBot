@@ -30,13 +30,12 @@ func MessageReactionRemoveTeamUnassign(s *discordgo.Session, event *discordgo.Me
 	userId := event.MessageReaction.UserID
 
 	// Return immediately if user does not have a favourited team
-	// or if the bot removed the reaction
-	if !reactionAddHandlers.UserHasFavouritedTeam(userId) || (event.UserID == os.Getenv("BOT_USER_ID")) {
+	if !reactionAddHandlers.UserHasFavouritedTeam(userId) {
 		return
 	}
 
 	// Fetch message history for the team-assign channel
-	maxMsgLimit := 100
+	maxMsgLimit := 10
 	messages, err := s.ChannelMessages(os.Getenv("TEAM_ASSIGN_CHANNEL_ID"), maxMsgLimit, "", "", "")
 	if err != nil {
 		fmt.Println("Error fetching messages. Err = ", err)
@@ -51,7 +50,7 @@ func MessageReactionRemoveTeamUnassign(s *discordgo.Session, event *discordgo.Me
 			if err != nil {
 				fmt.Errorf("Could not retrieve favourite team entry from DB : %v", err)
 			}
-			_, errDelete := repo.DeleteFavouriteTeam(userId)
+			_, errDelete := repo.DeleteFavouriteTeam(userId, event.MessageReaction.Emoji.Name)
 			if errDelete != nil {
 				fmt.Errorf("Could not insert new favourite team entry into DB : %v", err)
 			}

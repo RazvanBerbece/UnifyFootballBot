@@ -35,21 +35,34 @@ func (r FavouriteTeamsRepository) InsertFavouriteTeam(userId string, teamName st
 	return id, nil
 }
 
-func (r FavouriteTeamsRepository) GetFavouriteTeam(userId string) (string, error) {
-	var favTeamResult favouriteTeamModel.FavouriteTeam
-	row := r.conn.Db.QueryRow("SELECT * FROM FavouriteTeams WHERE userId = ?", userId)
-	if err := row.Scan(&favTeamResult.Id, &favTeamResult.UserId, &favTeamResult.TeamName); err != nil {
-		if err == sql.ErrNoRows {
-			return "", fmt.Errorf("GetFavouriteTeam %s: user does not have a favourite team", userId)
-		}
-		return "", fmt.Errorf("GetFavouriteTeam %s: %v", userId, err)
+func (r FavouriteTeamsRepository) GetFavouriteTeams(userId string) ([]favouriteTeamModel.FavouriteTeam, error) {
+
+	var favTeams []favouriteTeamModel.FavouriteTeam
+
+	rows, err := r.conn.Db.Query("SELECT * FROM FavouriteTeams WHERE userId = ?", userId)
+	if err != nil {
+		return nil, fmt.Errorf("GetFavouriteTeams %s: %v", userId, err)
 	}
-	return favTeamResult.TeamName, nil
+	defer rows.Close()
+
+	// Loop through rows, using Scan to assign column data to struct fields.
+	for rows.Next() {
+		var favTeam favouriteTeamModel.FavouriteTeam
+		if err := rows.Scan(&favTeam.Id, &favTeam.UserId, &favTeam.TeamName); err != nil {
+			return nil, fmt.Errorf("GetFavouriteTeams %s: %v", userId, err)
+		}
+		favTeams = append(favTeams, favTeam)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("GetFavouriteTeams %s: %v", userId, err)
+	}
+
+	return favTeams, nil
 }
 
-func (r FavouriteTeamsRepository) DeleteFavouriteTeam(userId string) (int64, error) {
+func (r FavouriteTeamsRepository) DeleteFavouriteTeam(userId string, teamName string) (int64, error) {
 	var favTeamResult favouriteTeamModel.FavouriteTeam
-	row := r.conn.Db.QueryRow("DELETE FROM FavouriteTeams WHERE userId = ?", userId)
+	row := r.conn.Db.QueryRow("DELETE FROM FavouriteTeams WHERE userId = ? AND favouriteTeam = ?", userId, teamName)
 	if err := row.Scan(&favTeamResult.Id, &favTeamResult.UserId, &favTeamResult.TeamName); err != nil {
 		if err == sql.ErrNoRows {
 			return 0, fmt.Errorf("DeleteFavouriteTeam %s: user does not have a favourite team to be deleted", userId)

@@ -28,13 +28,6 @@ func MessageReactionAddTeamAssign(s *discordgo.Session, event *discordgo.Message
 
 	logger.LogHandlerCall("MessageReactionAddTeamAssign", "")
 
-	// Only execute if user hasn't been assigned a favourite team
-	if UserHasFavouritedTeam(userId) {
-		// Revert current reaction to enforce 1 favourite team per user
-		revertFavouriteTeamAssignment(s, event.MessageReaction.MessageID, event.MessageReaction.Emoji.Name, userId)
-		return
-	}
-
 	// Fetch message history for the team-assign channel
 	maxMsgLimit := 5
 	messages, err := s.ChannelMessages(os.Getenv("TEAM_ASSIGN_CHANNEL_ID"), maxMsgLimit, "", "", "")
@@ -62,47 +55,12 @@ func MessageReactionAddTeamAssign(s *discordgo.Session, event *discordgo.Message
 
 func UserHasFavouritedTeam(userId string) bool {
 	repo := favouriteTeamsRepository.NewFavouriteTeamsRepository()
-	team, err := repo.GetFavouriteTeam(userId)
+	teams, err := repo.GetFavouriteTeams(userId)
 	if err != nil {
 		fmt.Errorf("Could not retrieve favourite team from DB for user with id %s : %v", userId, err)
 	}
-	if team != "" {
+	if len(teams) > 0 {
 		return true
 	}
 	return false
-}
-
-func revertFavouriteTeamAssignment(session *discordgo.Session, reactionMessageId string, teamName string, userId string) {
-
-	// Oct 2022: It seems that calling MessageReactionRemove below triggers the associated handler for happy path team unassignment.
-	// That is undersirable because it will then delete the favourite team from the DB for the given user when it shouldn't.
-	globals.TeamUnassignHandlerEnabled = false
-
-	// Get the message object from the channel
-	msg, err := session.ChannelMessage(os.Getenv("TEAM_ASSIGN_CHANNEL_ID"), reactionMessageId)
-	if err != nil {
-		fmt.Println("Error retrieving message: ", err)
-		return
-	}
-	// Loop through the reactions on the message to find the specific user reaction to remove
-	for _, reaction := range msg.Reactions {
-		if reaction.Emoji.Name == teamName {
-			// Remove the reaction
-			emojiId := fmt.Sprintf("%s:%s", reaction.Emoji.Name, reaction.Emoji.ID)
-			err := session.MessageReactionRemove(
-				os.Getenv("TEAM_ASSIGN_CHANNEL_ID"),
-				reactionMessageId,
-				emojiId,
-				userId,
-			)
-			if err != nil {
-				fmt.Println("Error removing reaction: ", err)
-			}
-			break
-		}
-	}
-
-	globals.TeamUnassignHandlerEnabled = true
-
-	// + message to user about conditions to assign teams ?
 }
