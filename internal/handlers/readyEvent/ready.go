@@ -3,8 +3,8 @@ package readyevent
 import (
 	"fmt"
 	"log"
-	"os"
 
+	"github.com/RazvanBerbece/UnifyFootballBot/internal/globals"
 	leagues "github.com/RazvanBerbece/UnifyFootballBot/internal/handlers/readyEvent/resources"
 	"github.com/RazvanBerbece/UnifyFootballBot/internal/logger"
 	"github.com/bwmarrin/discordgo"
@@ -17,7 +17,7 @@ func Ready(s *discordgo.Session, event *discordgo.Ready) {
 
 	// Send static messages to required channels
 	// team-assign, etc.
-	sendTeamAssignMessages(s, os.Getenv("TEAM_ASSIGN_CHANNEL_ID"))
+	sendTeamAssignMessages(s, globals.TeamAssignChannelId)
 
 }
 

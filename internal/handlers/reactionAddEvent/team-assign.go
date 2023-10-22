@@ -2,7 +2,6 @@ package teamassign
 
 import (
 	"fmt"
-	"os"
 
 	"github.com/bwmarrin/discordgo"
 
@@ -22,7 +21,7 @@ func MessageReactionAddTeamAssign(s *discordgo.Session, event *discordgo.Message
 	userId := event.MessageReaction.UserID
 
 	// If bot added reaction, simply return
-	if userId == os.Getenv("BOT_USER_ID") {
+	if userId == globals.BotUserId {
 		return
 	}
 
@@ -30,7 +29,7 @@ func MessageReactionAddTeamAssign(s *discordgo.Session, event *discordgo.Message
 
 	// Fetch message history for the team-assign channel
 	maxMsgLimit := 5
-	messages, err := s.ChannelMessages(os.Getenv("TEAM_ASSIGN_CHANNEL_ID"), maxMsgLimit, "", "", "")
+	messages, err := s.ChannelMessages(globals.TeamAssignChannelId, maxMsgLimit, "", "", "")
 	if err != nil {
 		fmt.Println("Error fetching messages. Err = ", err)
 		return

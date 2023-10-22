@@ -3,8 +3,8 @@ package databaseconn
 import (
 	"database/sql"
 	"log"
-	"os"
 
+	"github.com/RazvanBerbece/UnifyFootballBot/internal/globals"
 	"github.com/go-sql-driver/mysql"
 )
 
@@ -15,7 +15,7 @@ type Database struct {
 
 func (d *Database) ConnectDatabaseHandle() {
 
-	db, err := sql.Open("mysql", os.Getenv("UNIFYFOOTBALL_DB_CONNSTRING"))
+	db, err := sql.Open("mysql", globals.MySqlConnectionString)
 	if err != nil {
 		log.Fatal("Connection to database cannot be established :", err)
 	}

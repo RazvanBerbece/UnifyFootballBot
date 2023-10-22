@@ -2,7 +2,6 @@ package teamassign
 
 import (
 	"fmt"
-	"os"
 
 	"github.com/bwmarrin/discordgo"
 
@@ -32,7 +31,7 @@ func MessageReactionRemoveTeamUnassign(s *discordgo.Session, event *discordgo.Me
 
 	// Fetch message history for the team-assign channel
 	maxMsgLimit := 10
-	messages, err := s.ChannelMessages(os.Getenv("TEAM_ASSIGN_CHANNEL_ID"), maxMsgLimit, "", "", "")
+	messages, err := s.ChannelMessages(globals.TeamAssignChannelId, maxMsgLimit, "", "", "")
 	if err != nil {
 		fmt.Println("Error fetching messages. Err = ", err)
 		return
