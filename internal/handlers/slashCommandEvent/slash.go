@@ -34,7 +34,7 @@ func CleanupSlashCommands(s *discordgo.Session) {
 	for _, cmd := range globals.RegisteredCommands {
 		err := s.ApplicationCommandDelete(globals.AppId, "", cmd.ID)
 		if err != nil {
-			log.Panicf("Cannot delete '%v' command: %v", cmd.Name, err)
+			log.Fatal("Cannot delete '%v' command: %v", cmd.Name, err)
 		}
 	}
 }

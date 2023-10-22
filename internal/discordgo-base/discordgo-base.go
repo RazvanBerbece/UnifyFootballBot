@@ -74,7 +74,7 @@ func (b *DiscordGoBase) Connect() {
 
 // Closes the existing persistent websocket connection to the Discord servers.
 func (b *DiscordGoBase) Close() {
-	// Cleanup
+	// Cleanup resources
 	commands.CleanupSlashCommands(b.botSession)
 	// Connection closing
 	b.botSession.Close()
