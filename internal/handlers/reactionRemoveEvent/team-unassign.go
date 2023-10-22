@@ -16,6 +16,10 @@ import (
 
 func MessageReactionRemoveTeamUnassign(s *discordgo.Session, event *discordgo.MessageReactionRemove) {
 
+	if !globals.TeamUnassignHandlerEnabled {
+		return
+	}
+
 	// Only use this handler function in the team assignment channel
 	if event.ChannelID != globals.TeamAssignChannelId {
 		return
@@ -44,15 +48,10 @@ func MessageReactionRemoveTeamUnassign(s *discordgo.Session, event *discordgo.Me
 		if msg.ID == event.MessageReaction.MessageID {
 			// Remove favourite team entry for given user from DB
 			repo := favouriteTeamsRepository.NewFavouriteTeamsRepository()
-			// Oct 2022: It seems that calling MessageReactionRemove below triggers the associated handler for happy path team unassignment.
-			// That is undersirable because it will then delete the favourite team from the DB for the given user when it shouldn't.
-			// So I conditioned the deletion on the current team name that is in the DB.
-			currentFavTeamName, err := repo.GetFavouriteTeam(userId)
-			logger.LogHandlerCall(fmt.Sprintf("MessageReactionRemoveTeamUnassign - %s", currentFavTeamName), "")
 			if err != nil {
 				fmt.Errorf("Could not retrieve favourite team entry from DB : %v", err)
 			}
-			_, errDelete := repo.DeleteFavouriteTeam(userId, currentFavTeamName)
+			_, errDelete := repo.DeleteFavouriteTeam(userId)
 			if errDelete != nil {
 				fmt.Errorf("Could not insert new favourite team entry into DB : %v", err)
 			}

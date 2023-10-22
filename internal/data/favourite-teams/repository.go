@@ -47,14 +47,14 @@ func (r FavouriteTeamsRepository) GetFavouriteTeam(userId string) (string, error
 	return favTeamResult.TeamName, nil
 }
 
-func (r FavouriteTeamsRepository) DeleteFavouriteTeam(userId string, teamName string) (int64, error) {
+func (r FavouriteTeamsRepository) DeleteFavouriteTeam(userId string) (int64, error) {
 	var favTeamResult favouriteTeamModel.FavouriteTeam
-	row := r.conn.Db.QueryRow("DELETE FROM FavouriteTeams WHERE userId = ? AND favouriteTeam = ?", userId, teamName)
+	row := r.conn.Db.QueryRow("DELETE FROM FavouriteTeams WHERE userId = ?", userId)
 	if err := row.Scan(&favTeamResult.Id, &favTeamResult.UserId, &favTeamResult.TeamName); err != nil {
 		if err == sql.ErrNoRows {
-			return 0, fmt.Errorf("DeleteFavouriteTeam %s: user does not have a favourite team %s to be deleted", teamName, userId)
+			return 0, fmt.Errorf("DeleteFavouriteTeam %s: user does not have a favourite team to be deleted", userId)
 		}
-		return 0, fmt.Errorf("DeleteFavouriteTeam %s, %s: %v", userId, teamName, err)
+		return 0, fmt.Errorf("DeleteFavouriteTeam %s: %v", userId, err)
 	}
 	return 1, nil
 }

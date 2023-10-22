@@ -74,6 +74,10 @@ func UserHasFavouritedTeam(userId string) bool {
 
 func revertFavouriteTeamAssignment(session *discordgo.Session, reactionMessageId string, teamName string, userId string) {
 
+	// Oct 2022: It seems that calling MessageReactionRemove below triggers the associated handler for happy path team unassignment.
+	// That is undersirable because it will then delete the favourite team from the DB for the given user when it shouldn't.
+	globals.TeamUnassignHandlerEnabled = false
+
 	// Get the message object from the channel
 	msg, err := session.ChannelMessage(os.Getenv("TEAM_ASSIGN_CHANNEL_ID"), reactionMessageId)
 	if err != nil {
@@ -94,8 +98,11 @@ func revertFavouriteTeamAssignment(session *discordgo.Session, reactionMessageId
 			if err != nil {
 				fmt.Println("Error removing reaction: ", err)
 			}
+			break
 		}
 	}
+
+	globals.TeamUnassignHandlerEnabled = true
 
 	// + message to user about conditions to assign teams ?
 }

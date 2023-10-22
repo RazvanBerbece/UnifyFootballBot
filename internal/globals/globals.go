@@ -1,8 +1,13 @@
 package globals
 
-import "os"
+import (
+	"os"
+
+	"github.com/joho/godotenv"
+)
 
 // =============== ENVIRONMENT VARIABLES ===============
+var err = godotenv.Load(".env") // Load
 
 var Environment = os.Getenv("ENVIRONMENT") // staging / production
 
@@ -16,3 +21,6 @@ var MySqlPassword = os.Getenv("MYSQL_PASSWORD")
 var MySqlConnectionString = os.Getenv("UNIFYFOOTBALL_DB_CONNSTRING") // in format `root_username:root_password@tcp(host:port)/db_name`
 
 var TeamAssignChannelId = os.Getenv("TEAM_ASSIGN_CHANNEL_ID")
+
+// =============== HANDLER TOGGLES ===============
+var TeamUnassignHandlerEnabled = true
