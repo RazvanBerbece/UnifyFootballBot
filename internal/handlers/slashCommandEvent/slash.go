@@ -1,10 +1,12 @@
 package slashCommandEvent
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/RazvanBerbece/UnifyFootballBot/internal/globals"
 	commands "github.com/RazvanBerbece/UnifyFootballBot/internal/handlers/slashCommandEvent/commands"
+	"github.com/RazvanBerbece/UnifyFootballBot/internal/logger"
 	"github.com/bwmarrin/discordgo"
 )
 
@@ -12,7 +14,7 @@ func RegisterSlashCommands(s *discordgo.Session) error {
 
 	globals.RegisteredCommands = make([]*discordgo.ApplicationCommand, len(commands.SlashCommands))
 	for index, cmd := range commands.SlashCommands {
-		_, err := s.ApplicationCommandCreate(globals.AppId, "", cmd)
+		_, err := s.ApplicationCommandCreate(globals.AppId, globals.GuildId, cmd)
 		if err != nil {
 			return err
 		}
@@ -30,9 +32,9 @@ func RegisterSlashCommands(s *discordgo.Session) error {
 }
 
 func CleanupSlashCommands(s *discordgo.Session) {
-	log.Println("Removing commands...")
 	for _, cmd := range globals.RegisteredCommands {
-		err := s.ApplicationCommandDelete(globals.AppId, "", cmd.ID)
+		logger.LogCleanup(fmt.Sprintf("<SlashCommand %s>", cmd.Name))
+		err := s.ApplicationCommandDelete(globals.AppId, globals.GuildId, cmd.ID)
 		if err != nil {
 			log.Fatal("Cannot delete '%v' command: %v", cmd.Name, err)
 		}

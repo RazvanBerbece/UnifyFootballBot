@@ -22,6 +22,7 @@ var MySqlUserName = os.Getenv("MYSQL_USER")
 var MySqlPassword = os.Getenv("MYSQL_PASSWORD")
 var MySqlConnectionString = os.Getenv("UNIFYFOOTBALL_DB_CONNSTRING") // in format `root_username:root_password@tcp(host:port)/db_name`
 
+var GuildId = os.Getenv("GUILD_ID") // the id of the server the bot is in
 var TeamAssignChannelId = os.Getenv("TEAM_ASSIGN_CHANNEL_ID")
 
 // =============== RUNTIME VARS ===============

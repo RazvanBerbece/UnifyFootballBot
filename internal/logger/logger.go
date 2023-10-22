@@ -23,6 +23,7 @@ func LogHandlerCall(handlerName string, filename string) {
 	if err != nil {
 		log.Fatal("Could not open log file for Handler calls. Err = ", err)
 	}
+	defer file.Close()
 
 	log.SetOutput(file)
 
@@ -45,6 +46,7 @@ func LogSentMessage(handlerName string, message string) {
 	if err != nil {
 		log.Fatal("Could not open log file for sent messages. Err = ", err)
 	}
+	defer file.Close()
 
 	log.SetOutput(file)
 
@@ -66,6 +68,7 @@ func LogAddReaction(handlerName string, messageId string, emojiId string) {
 	if err != nil {
 		log.Fatal("Could not open log file for added reactions. Err = ", err)
 	}
+	defer file.Close()
 
 	log.SetOutput(file)
 
@@ -87,6 +90,7 @@ func LogTeamAssignment(handlerName string, userId string, team string) {
 	if err != nil {
 		log.Fatal("Could not open log file for team assignment. Err = ", err)
 	}
+	defer file.Close()
 
 	log.SetOutput(file)
 
@@ -108,10 +112,33 @@ func LogSlashCommand(command string, userId string) {
 	if err != nil {
 		log.Fatal("Could not open log file for slash commands. Err = ", err)
 	}
+	defer file.Close()
 
 	log.SetOutput(file)
 
 	log.Printf("Slash command %s triggered by user %s", command, userId)
+
+	log.SetOutput(os.Stderr)
+
+}
+
+func LogCleanup(resource string) {
+
+	// If the file and/or path doesn't exist, create, or append to the file
+	pathToLogfile := filepath.Join(".", "logs/")
+	err := os.MkdirAll(pathToLogfile, os.ModePerm)
+	if err != nil {
+		log.Fatal("Could not create filepath for cleaned up resources log file. Err = ", err)
+	}
+	file, err := os.OpenFile("logs/cleanup.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
+	if err != nil {
+		log.Fatal("Could not open log file for cleaned up resources. Err = ", err)
+	}
+	defer file.Close()
+
+	log.SetOutput(file)
+
+	log.Printf("Resource %s deleted", resource)
 
 	log.SetOutput(os.Stderr)
 
