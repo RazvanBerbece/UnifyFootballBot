@@ -9,17 +9,11 @@ The extensible, fast and reliable Discord bot which powers the UnifyFootball.ro 
 3. Have the Go SDK installed.
 4. (Optional) Have Docker installed.
 
-## On host machine
-1. Build the project executable by running the `go build -o build ./cmd/...` command at the root of the repo.
-2. Start the bot application by running the `./build/bot-srv` command at the root of the repo.
-
-## In Docker
-1. Build the container image by running the `docker build --tag unify-bot-app .` command at the root of the repo.
-2. Run the container with the `docker run unify-bot-app` command at the root of the repo.
-
-## Run the entire stack
+## Run the application
 1. Run the full container app composition (app, DBs, etc.) with the `docker compose up -d --remove-orphans` command.
 2. Bring down the application by running `docker compose down`.
+
+_Note: In case one needs to run only the Go application code without any associated infrastructure, it is possible by simply running `go build -o build ./cmd/... && ./build/bot-srv`. This however means that the DB operations will not work and thus not all bot features available, unless a local non-containerised MySQL server is used._
 
 # How to Test
 1. Run all the tests for the project by running the `go test ./internal/...` command at the root of the repo.
