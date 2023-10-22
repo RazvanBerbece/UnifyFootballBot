@@ -1,8 +1,10 @@
 package favouriteteams
 
 import (
+	"database/sql"
 	"fmt"
 
+	favouriteTeamModel "github.com/RazvanBerbece/UnifyFootballBot/internal/data/favourite-teams/models"
 	databaseconn "github.com/RazvanBerbece/UnifyFootballBot/internal/database-conn"
 )
 
@@ -31,4 +33,16 @@ func (r FavouriteTeamsRepository) InsertFavouriteTeam(userId string, teamName st
 		return 0, fmt.Errorf("InsertFavouriteTeam: %v", err)
 	}
 	return id, nil
+}
+
+func (r FavouriteTeamsRepository) GetFavouriteTeam(userId string) (string, error) {
+	var favTeamResult favouriteTeamModel.FavouriteTeam
+	row := r.conn.Db.QueryRow("SELECT * FROM FavouriteTeams WHERE userId = ?", userId)
+	if err := row.Scan(&favTeamResult.Id, &favTeamResult.UserId, &favTeamResult.TeamName); err != nil {
+		if err == sql.ErrNoRows {
+			return "", fmt.Errorf("GetFavouriteTeam %s: user does not have a favourite team", userId)
+		}
+		return "", fmt.Errorf("GetFavouriteTeam %s: %v", userId, err)
+	}
+	return favTeamResult.TeamName, nil
 }

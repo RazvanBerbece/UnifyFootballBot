@@ -4,7 +4,7 @@ The extensible, fast and reliable Discord bot which powers the UnifyFootball.ro 
 # How to Run
 ## Prerequisites
 1. Bot has to be added as an app to the Discord server.
-2. The `.env` file has to be created in this repo and populated with the correct key-value pairs (`DISCORD_BOT_TOKEN=...`, `APP_ID=...`)
+2. The `.env` file has to be created in this repo and populated with the correct key-value pairs (`DISCORD_BOT_TOKEN=...`, `APP_ID=...`, etc.)
 3. Have the Go SDK installed.
 4. (Optional) Have Docker installed.
 

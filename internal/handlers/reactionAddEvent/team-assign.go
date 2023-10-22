@@ -15,6 +15,7 @@ func MessageReactionAddTeamAssign(s *discordgo.Session, event *discordgo.Message
 
 	// Only execute if user hasn't been assigned a favourite team
 	if userHasFavouritedTeam(userId) {
+		// TODO: And revert reaction + message to user about conditions to assign teams ?
 		return
 	}
 
@@ -33,7 +34,7 @@ func MessageReactionAddTeamAssign(s *discordgo.Session, event *discordgo.Message
 			reaction := event.MessageReaction.Emoji
 			teamName := reaction.Name
 			fmt.Printf("User with ID %s reacted to message with emoji %s\n", userId, teamName)
-			// TODO STORE ETC.
+			// Store favourite team name for given user to DB
 			repo := favouriteTeamsRepository.NewFavouriteTeamsRepository()
 			_, err := repo.InsertFavouriteTeam(userId, teamName)
 			if err != nil {
@@ -45,5 +46,13 @@ func MessageReactionAddTeamAssign(s *discordgo.Session, event *discordgo.Message
 }
 
 func userHasFavouritedTeam(userId string) bool {
+	repo := favouriteTeamsRepository.NewFavouriteTeamsRepository()
+	team, err := repo.GetFavouriteTeam(userId)
+	if err != nil {
+		fmt.Errorf("Could not retrieve favourite team from DB for user with id %s : %v", userId, err)
+	}
+	if team != "" {
+		return true
+	}
 	return false
 }
