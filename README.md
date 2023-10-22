@@ -9,7 +9,7 @@ The extensible, fast and reliable Discord bot which powers the UnifyFootball.ro 
 4. (Optional) Have Docker installed.
 
 ## On host machine
-1. Build the project by running the `go build -o build ./cmd/... && go build ./internal/...` command at the root of the repo.
+1. Build the project executable by running the `go build -o build ./cmd/...` command at the root of the repo.
 2. Start the bot application by running the `./build/bot-srv` command at the root of the repo.
 
 ## In Docker

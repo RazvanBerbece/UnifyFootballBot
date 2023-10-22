@@ -55,6 +55,7 @@ jobs:
         run: go test ./internal/...
       
   generate-release:
+    if: github.ref_name == 'main'
     needs: [build, test]
     uses: ./.github/workflows/release.yml
     secrets:
