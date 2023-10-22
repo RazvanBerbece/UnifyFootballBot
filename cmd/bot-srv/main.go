@@ -20,6 +20,6 @@ func main() {
 	botBase.Connect()
 
 	// Close connection
-	botBase.Close()
+	defer botBase.Close()
 
 }

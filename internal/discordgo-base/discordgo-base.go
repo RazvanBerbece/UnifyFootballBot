@@ -8,6 +8,8 @@ import (
 	"syscall"
 
 	"github.com/bwmarrin/discordgo"
+
+	commands "github.com/RazvanBerbece/UnifyFootballBot/internal/handlers/slashCommandEvent"
 )
 
 type DiscordGoBase struct {
@@ -39,8 +41,15 @@ func (b *DiscordGoBase) ConfigureBase(withToken string, handlers []interface{}) 
 	intents := discordgo.IntentsGuilds |
 		discordgo.IntentsGuildMessages |
 		discordgo.IntentsGuildMessageReactions |
-		discordgo.PermissionManageMessages
+		discordgo.PermissionManageMessages |
+		discordgo.PermissionManageServer
 	session.Identify.Intents = intents
+
+	// Register slash commands
+	err = commands.RegisterSlashCommands(session)
+	if err != nil {
+		log.Fatal("Error registering slash commands: ", err)
+	}
 
 	b.botSession = session
 
@@ -65,6 +74,9 @@ func (b *DiscordGoBase) Connect() {
 
 // Closes the existing persistent websocket connection to the Discord servers.
 func (b *DiscordGoBase) Close() {
+	// Cleanup
+	commands.CleanupSlashCommands(b.botSession)
+	// Connection closing
 	b.botSession.Close()
 	b.isConnected = false
 }

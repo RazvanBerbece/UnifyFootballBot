@@ -16,10 +16,6 @@ import (
 
 func MessageReactionRemoveTeamUnassign(s *discordgo.Session, event *discordgo.MessageReactionRemove) {
 
-	if !globals.TeamUnassignHandlerEnabled {
-		return
-	}
-
 	// Only use this handler function in the team assignment channel
 	if event.ChannelID != globals.TeamAssignChannelId {
 		return

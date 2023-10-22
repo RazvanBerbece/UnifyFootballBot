@@ -3,6 +3,7 @@ package globals
 import (
 	"os"
 
+	"github.com/bwmarrin/discordgo"
 	"github.com/joho/godotenv"
 )
 
@@ -13,6 +14,7 @@ var Environment = os.Getenv("ENVIRONMENT") // staging / production
 
 var DiscordBotToken = os.Getenv("DISCORD_BOT_TOKEN")
 var BotUserId = os.Getenv("BOT_USER_ID")
+var AppId = os.Getenv("APP_ID")
 
 var MySqlRootPassword = os.Getenv("MYSQL_ROOT_PASSWORD")
 var MySqlDatabaseName = os.Getenv("MYSQL_DATABASE")
@@ -22,5 +24,5 @@ var MySqlConnectionString = os.Getenv("UNIFYFOOTBALL_DB_CONNSTRING") // in forma
 
 var TeamAssignChannelId = os.Getenv("TEAM_ASSIGN_CHANNEL_ID")
 
-// =============== HANDLER TOGGLES ===============
-var TeamUnassignHandlerEnabled = true
+// =============== RUNTIME VARS ===============
+var RegisteredCommands []*discordgo.ApplicationCommand
