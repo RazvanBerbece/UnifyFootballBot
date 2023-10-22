@@ -57,6 +57,11 @@ func (r FavouriteTeamsRepository) GetFavouriteTeams(userId string) ([]favouriteT
 		return nil, fmt.Errorf("GetFavouriteTeams %s: %v", userId, err)
 	}
 
+	// Check for zero rows
+	if len(favTeams) == 0 {
+		return []favouriteTeamModel.FavouriteTeam{}, nil
+	}
+
 	return favTeams, nil
 }
 

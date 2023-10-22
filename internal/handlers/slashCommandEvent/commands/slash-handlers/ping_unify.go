@@ -1,4 +1,4 @@
-package commands
+package slashHandlers
 
 import (
 	"github.com/RazvanBerbece/UnifyFootballBot/internal/logger"
