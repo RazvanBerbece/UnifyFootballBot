@@ -3,6 +3,7 @@ package slashHandlers
 import (
 	"fmt"
 
+	"github.com/RazvanBerbece/UnifyFootballBot/internal/globals"
 	"github.com/RazvanBerbece/UnifyFootballBot/internal/logger"
 	"github.com/bwmarrin/discordgo"
 
@@ -29,7 +30,7 @@ func HandleSlashMyTeams(s *discordgo.Session, i *discordgo.InteractionCreate) {
 			// User has *no* favourited teams
 			response =
 				"**You don't have any favourited teams !**\n\n" +
-					"To choose a favourite team please go to the `team-assignment` channel and pick your teams by reacting to the messages there."
+					fmt.Sprintf("To choose a favourite team please go to the <#%s> channel and pick your teams by reacting to the messages there.", globals.TeamAssignChannelId)
 		} else {
 			// User has favourited teams
 			response = "Your favourited teams are: "

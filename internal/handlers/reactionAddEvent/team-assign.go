@@ -7,6 +7,7 @@ import (
 
 	"github.com/RazvanBerbece/UnifyFootballBot/internal/globals"
 	"github.com/RazvanBerbece/UnifyFootballBot/internal/logger"
+	"github.com/RazvanBerbece/UnifyFootballBot/internal/utils"
 
 	favouriteTeamsRepository "github.com/RazvanBerbece/UnifyFootballBot/internal/data/favourite-teams"
 )
@@ -46,6 +47,12 @@ func MessageReactionAddTeamAssign(s *discordgo.Session, event *discordgo.Message
 			_, err := repo.InsertFavouriteTeam(userId, teamName)
 			if err != nil {
 				fmt.Errorf("Could not insert new favourite team entry into DB : %v", err)
+			}
+			// Send DM to user to confirm transaction
+			transactionMsg := fmt.Sprintf("Confirmation of selecting %s as one of your favourite teams.", teamName)
+			errDm := utils.SendDmToUserFromMsgReactionAdd(s, event, userId, transactionMsg)
+			if errDm != nil {
+				fmt.Println("Error sending DM: ", errDm)
 			}
 		}
 	}

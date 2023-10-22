@@ -42,7 +42,8 @@ func (b *DiscordGoBase) ConfigureBase(withToken string, handlers []interface{}) 
 		discordgo.IntentsGuildMessages |
 		discordgo.IntentsGuildMessageReactions |
 		discordgo.PermissionManageMessages |
-		discordgo.PermissionManageServer
+		discordgo.PermissionManageServer |
+		discordgo.IntentsDirectMessages
 	session.Identify.Intents = intents
 
 	// Register slash commands

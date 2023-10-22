@@ -6,6 +6,7 @@ import (
 	"github.com/bwmarrin/discordgo"
 
 	"github.com/RazvanBerbece/UnifyFootballBot/internal/logger"
+	"github.com/RazvanBerbece/UnifyFootballBot/internal/utils"
 
 	"github.com/RazvanBerbece/UnifyFootballBot/internal/globals"
 
@@ -48,6 +49,12 @@ func MessageReactionRemoveTeamUnassign(s *discordgo.Session, event *discordgo.Me
 			_, errDelete := repo.DeleteFavouriteTeam(userId, event.MessageReaction.Emoji.Name)
 			if errDelete != nil {
 				fmt.Errorf("Could not insert new favourite team entry into DB : %v", err)
+			}
+			// Send DM to user to confirm transaction
+			transactionMsg := fmt.Sprintf("Confirmation of removing %s from your favourite teams.", event.MessageReaction.Emoji.Name)
+			errDm := utils.SendDmToUserFromMsgReactionRemove(s, event, userId, transactionMsg)
+			if errDm != nil {
+				fmt.Println("Error sending DM: ", errDm)
 			}
 		}
 	}
