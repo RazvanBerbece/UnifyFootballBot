@@ -10,8 +10,9 @@ The extensible, fast and reliable Discord bot which powers the UnifyFootball.ro 
 4. (Optional) Have Docker installed.
 
 ## Run the application
-1. Run the full container app composition (app, DBs, etc.) with the `docker compose up -d --remove-orphans` command.
-2. Bring down the application by running `docker compose down`.
+1. Build the container app image with the `docker compose build` command.
+2. Run the full container app composition (app, DBs, etc.) with the `docker compose up -d --remove-orphans` command.
+3. Bring down the application by running `docker compose down`.
 
 _Note: In case one needs to run only the Go application code without any associated infrastructure, it is possible by simply running `go build -o build ./cmd/... && ./build/bot-srv`. This however means that the DB operations will not work and thus not all bot features available, unless a local non-containerised MySQL server is used._
 
