@@ -14,24 +14,9 @@ import (
 	"github.com/RazvanBerbece/UnifyFootballBot/internal/globals"
 )
 
-type Team struct {
-	Id          int
-	Name        string
-	DisplayName string
-	LogoUrl     string
-	LogoBase64  string
-}
+func GetLeaguesForCountry(countryName string, leagues int) []apiFootballModels.League {
 
-type League struct {
-	Id          int
-	Name        string
-	CountryName string
-	Teams       []Team
-}
-
-func GetLeaguesForCountry(countryName string, leagues int) []League {
-
-	var retLeagues []League
+	var retLeagues []apiFootballModels.League
 
 	url := fmt.Sprintf("https://api-football-v1.p.rapidapi.com/v3/leagues?country=%s", countryName)
 
@@ -58,7 +43,7 @@ func GetLeaguesForCountry(countryName string, leagues int) []League {
 	// Construct first `league` Leagues for given country
 	var i int
 	for i = 0; i < leagues; i++ {
-		retLeagues = append(retLeagues, League{
+		retLeagues = append(retLeagues, apiFootballModels.League{
 			Id:          leaguesResponse.Response[i].League.ID,
 			Name:        leaguesResponse.Response[i].League.Name,
 			CountryName: countryName,
@@ -69,9 +54,9 @@ func GetLeaguesForCountry(countryName string, leagues int) []League {
 
 }
 
-func GetTeamsForLeague(leagueId int, season int, countryName string) []Team {
+func GetTeamsForLeague(leagueId int, season int, countryName string) []apiFootballModels.Team {
 
-	var retTeams []Team
+	var retTeams []apiFootballModels.Team
 
 	url := fmt.Sprintf("https://api-football-v1.p.rapidapi.com/v3/teams?league=%d&season=%d&country=%s", leagueId, season, countryName)
 
@@ -103,7 +88,7 @@ func GetTeamsForLeague(leagueId int, season int, countryName string) []Team {
 		teamDisplayName := unidecode.Unidecode(teamsResponse.Response[i].Team.Name)
 		// it seems that the Discord API needs emoji names to not have blank spaces, so we do this
 		teamName := strings.Replace(teamDisplayName, " ", "_", -1)
-		teamToAdd := Team{
+		teamToAdd := apiFootballModels.Team{
 			Id:          teamsResponse.Response[i].Team.ID,
 			Name:        teamName,
 			DisplayName: teamDisplayName,

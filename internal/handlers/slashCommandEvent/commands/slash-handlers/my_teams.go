@@ -2,6 +2,7 @@ package slashHandlers
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/RazvanBerbece/UnifyFootballBot/internal/globals"
 	"github.com/RazvanBerbece/UnifyFootballBot/internal/logger"
@@ -22,7 +23,7 @@ func HandleSlashMyTeams(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	repo := favouriteTeamsRepository.NewFavouriteTeamsRepository()
 	teams, err := repo.GetFavouriteTeams(userId)
 	if err != nil {
-		fmt.Errorf("Could not retrieve favourite teams from DB for user with id %s : %v", userId, err)
+		fmt.Printf("Could not retrieve favourite teams from DB for user with id %s : %v", userId, err)
 	}
 
 	if teams != nil {
@@ -33,15 +34,16 @@ func HandleSlashMyTeams(s *discordgo.Session, i *discordgo.InteractionCreate) {
 					fmt.Sprintf("To choose a favourite team please go to the <#%s> channel and pick your teams by reacting to the messages there.", globals.TeamAssignChannelId)
 		} else {
 			// User has favourited teams
-			response = "Your favourited teams are: "
+			response = "Your favourited teams are:\n"
 			for index, team := range teams {
+				displayTeamName := strings.Replace(team.TeamName, "_", " ", -1)
 				if index == len(teams)-1 {
 					// Useful for pretty formatting of the list.
 					// this accounts for the last entry in the favourite list, which doesn't need a comma after
-					response = response + fmt.Sprintf("%s", team.TeamName)
+					response = response + "* " + displayTeamName
 					break
 				}
-				response = response + fmt.Sprintf("%s, ", team.TeamName)
+				response = response + fmt.Sprintf("* %s\n", displayTeamName)
 			}
 		}
 	} else {

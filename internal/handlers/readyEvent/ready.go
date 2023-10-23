@@ -9,6 +9,8 @@ import (
 	"github.com/RazvanBerbece/UnifyFootballBot/internal/utils"
 	"github.com/bwmarrin/discordgo"
 
+	apiFootballModels "github.com/RazvanBerbece/UnifyFootballBot/internal/apis/api-football/models"
+
 	apiFootballClient "github.com/RazvanBerbece/UnifyFootballBot/internal/apis/api-football"
 )
 
@@ -38,11 +40,16 @@ func sendTeamAssignMessages(session *discordgo.Session, channelId string) {
 
 	// Get all available leagues and teams
 	// and reaction image data to post in the channel
-	leagues := apiFootballClient.GetLeaguesForCountry("Romania", 1)
-	for index, league := range leagues {
-		teams := apiFootballClient.GetTeamsForLeague(league.Id, 2023, league.CountryName)
-		leagues[index].Teams = teams
+	var leagues []apiFootballModels.League
+	for _, country := range globals.LeagueCountries {
+		leagues := apiFootballClient.GetLeaguesForCountry(country, globals.LeaguesPerCountryNumber)
+		for index, league := range leagues {
+			teams := apiFootballClient.GetTeamsForLeague(league.Id, 2023, league.CountryName)
+			leagues[index].Teams = teams
+		}
 	}
+	// Store available leagues in memory for this instance; this is useful for further generation of roles and other football-api calls
+	globals.AvailableLeagues = leagues
 
 	reactionIdsByMessageId := make(map[string][]string) // keep track of the reactions under each league message
 	fmt.Println("Creating Guild reactions with teams from the given leagues...")
