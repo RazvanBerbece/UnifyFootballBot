@@ -7,7 +7,8 @@ The extensible, fast and reliable Discord bot which powers the UnifyFootball.ro 
 2. The `.env` file has to be created in this repo and populated with the correct key-value pairs (`DISCORD_BOT_TOKEN=...`, `APP_ID=...`, etc.)
     - The file [globals.go](internal/globals/globals.go) contains the declarations of all the required environment variables required by the project (i.e all of them have to be in the `.env` file), alongside bits of useful documentation for what values are expected for the variables
 3. Have the Go SDK installed.
-4. (Optional) Have Docker installed.
+4. Have an API Key and host for the API-Football service which is leveraged for the football data. (see https://rapidapi.com/api-sports/api/api-football)
+5. (Optional) Have Docker installed.
 
 ## Run the application
 1. Run a built full container app composition (app, DBs, etc.) with the `docker compose up -d --remove-orphans --build` command.
