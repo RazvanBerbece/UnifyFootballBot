@@ -19,12 +19,14 @@ type Team struct {
 	Name        string
 	DisplayName string
 	LogoUrl     string
+	LogoBase64  string
 }
 
 type League struct {
 	Id          int
 	Name        string
 	CountryName string
+	Teams       []Team
 }
 
 func GetLeaguesForCountry(countryName string, leagues int) []League {
@@ -101,12 +103,19 @@ func GetTeamsForLeague(leagueId int, season int, countryName string) []Team {
 		teamDisplayName := unidecode.Unidecode(teamsResponse.Response[i].Team.Name)
 		// it seems that the Discord API needs emoji names to not have blank spaces, so we do this
 		teamName := strings.Replace(teamDisplayName, " ", "_", -1)
-		retTeams = append(retTeams, Team{
+		teamToAdd := Team{
 			Id:          teamsResponse.Response[i].Team.ID,
 			Name:        teamName,
 			DisplayName: teamDisplayName,
 			LogoUrl:     teamsResponse.Response[i].Team.Logo,
-		})
+		}
+		// Retrieve the image data for all team logos
+		encodedString, err := GetImageAsBase64FromUrl(teamToAdd.LogoUrl)
+		if err != nil {
+			fmt.Printf("An error occured while downloading team logo image data: %v", err)
+		}
+		teamToAdd.LogoBase64 = encodedString
+		retTeams = append(retTeams, teamToAdd)
 	}
 
 	return retTeams
@@ -134,7 +143,6 @@ func GetImageAsBase64FromUrl(url string) (string, error) {
 	// Encode the image data as a base64 string in the Discord format
 	encodedImage := base64.StdEncoding.EncodeToString(imageBytes)
 	encodedImage += strings.Repeat("=", (4-len(encodedImage)%4)%4)
-	fmt.Println(encodedImage)
 
 	return encodedImage, nil
 

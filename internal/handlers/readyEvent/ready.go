@@ -36,12 +36,15 @@ func sendTeamAssignMessages(session *discordgo.Session, channelId string) {
 		return
 	}
 
-	// Get all available leagues and reactions to post in the channel
+	// Get all available leagues and teams
+	// and reactions to post in the channel
 	leagues := apiFootballClient.GetLeaguesForCountry("Romania", 1)
+	for index, league := range leagues {
+		teams := apiFootballClient.GetTeamsForLeague(league.Id, 2023, league.CountryName)
+		leagues[index].Teams = teams
+	}
 
-	// TODO: Configure roles for the available teams
-
-	// Step 1 - Send the messages
+	// Step 1 - Send the league specific messages
 	reactionIdsByMessageId := make(map[string][]string) // keep track of the reactions under each league message
 	fmt.Println("Creating Guild reactions with teams from the given leagues...")
 	for _, league := range leagues {
@@ -56,36 +59,31 @@ func sendTeamAssignMessages(session *discordgo.Session, channelId string) {
 		logger.LogSentMessage("Ready", msg.Content)
 
 		// Step 2 - Get logos to create emojis
-		teams := apiFootballClient.GetTeamsForLeague(league.Id, 2023, league.CountryName)
-		for _, team := range teams {
-			encodedImage, err := apiFootballClient.GetImageAsBase64FromUrl(team.LogoUrl)
-			if err != nil {
-				log.Fatalf("An error occured while downloading the logo for %s: %v", team.Name, err)
-				return
-			}
-			emoji, err := utils.CreateGuildEmoji(session, globals.GuildId, team.Name, encodedImage)
+		for _, team := range league.Teams {
+			logger.LogCreateReaction("Ready", "Reaction "+team.DisplayName+" creating...")
+			emoji, err := utils.CreateGuildEmoji(session, globals.GuildId, team.Name, team.LogoBase64)
 			if err != nil {
 				log.Fatalf("An error occured while creating emojis: %v", err)
 				return
 			}
-			reactionIdsByMessageId[msg.ID] = append(reactionIdsByMessageId[msg.ID], fmt.Sprintf("<%s:%s>", emoji.Name, emoji.ID))
+			reactionIdsByMessageId[msg.ID] = append(reactionIdsByMessageId[msg.ID], fmt.Sprintf("%s:%s", emoji.Name, emoji.ID))
 			logger.LogCreateReaction("Ready", emoji.Name)
 		}
 	}
 
 	// Step 3 - React with the team logos
 	// For each message sent above
+	fmt.Println("Reacting to league messages...")
 	for k, v := range reactionIdsByMessageId {
 		messageId := k
 		reactionIds := v
 		// Add each available reaction
 		for _, emojiId := range reactionIds {
-			teamLogoFormatted := fmt.Sprintf("%s", emojiId)
-			err := session.MessageReactionAdd(channelId, messageId, teamLogoFormatted)
+			err := session.MessageReactionAdd(channelId, messageId, emojiId)
 			if err != nil {
 				fmt.Printf("Error adding reaction with ID %s to message. Err = %s", emojiId, err)
 			} else {
-				logger.LogAddReaction("Ready", teamLogoFormatted)
+				logger.LogAddReaction("Ready", emojiId)
 			}
 		}
 	}
