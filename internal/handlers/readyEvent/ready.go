@@ -78,7 +78,10 @@ func sendTeamAssignMessages(session *discordgo.Session, channelId string) {
 		}
 	}
 
-	// Step 3 - React with the team logos
+	// Step 3 - Create roles based on available leagues and teams
+	// TODO
+
+	// Step 4 - React with the team logos
 	// For each message sent above
 	fmt.Println("Reacting to league messages...")
 	for k, v := range reactionIdsByMessageId {
