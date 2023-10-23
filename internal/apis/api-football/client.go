@@ -77,7 +77,7 @@ func GetTeamsForLeague(leagueId int, season int, countryName string) []Team {
 
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
-		fmt.Printf("An error occured while creating request to retrieve teams for league %s: %v", leagueId, err)
+		fmt.Printf("An error occured while creating request to retrieve teams for league %d: %v", leagueId, err)
 	}
 
 	req.Header.Add("X-RapidAPI-Key", globals.RapidApiFootballKey)
@@ -85,7 +85,7 @@ func GetTeamsForLeague(leagueId int, season int, countryName string) []Team {
 
 	res, err := http.DefaultClient.Do(req)
 	if err != nil {
-		fmt.Printf("An error occured while retrieving teams for league %s: %v", leagueId, err)
+		fmt.Printf("An error occured while retrieving teams for league %d: %v", leagueId, err)
 	}
 	defer res.Body.Close()
 
