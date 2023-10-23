@@ -2,6 +2,7 @@ package teamassign
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/bwmarrin/discordgo"
 
@@ -46,10 +47,11 @@ func MessageReactionAddTeamAssign(s *discordgo.Session, event *discordgo.Message
 			repo := favouriteTeamsRepository.NewFavouriteTeamsRepository()
 			_, err := repo.InsertFavouriteTeam(userId, teamName)
 			if err != nil {
-				fmt.Errorf("Could not insert new favourite team entry into DB : %v", err)
+				fmt.Printf("Could not insert new favourite team entry into DB : %v", err)
 			}
 			// Send DM to user to confirm transaction
-			transactionMsg := fmt.Sprintf("Confirmation of selecting %s as one of your favourite teams.", teamName)
+			displayTeamName := strings.Replace(teamName, "_", " ", -1)
+			transactionMsg := fmt.Sprintf("Confirmation of selecting %s as one of your favourite teams.", displayTeamName)
 			errDm := utils.SendDmToUserFromMsgReactionAdd(s, event, userId, transactionMsg)
 			if errDm != nil {
 				fmt.Println("Error sending DM: ", errDm)
@@ -63,7 +65,7 @@ func UserHasFavouritedTeam(userId string) bool {
 	repo := favouriteTeamsRepository.NewFavouriteTeamsRepository()
 	teams, err := repo.GetFavouriteTeams(userId)
 	if err != nil {
-		fmt.Errorf("Could not retrieve favourite team from DB for user with id %s : %v", userId, err)
+		fmt.Printf("Could not retrieve favourite team from DB for user with id %s : %v", userId, err)
 	}
 	if len(teams) > 0 {
 		return true

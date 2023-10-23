@@ -2,6 +2,7 @@ package teamassign
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/bwmarrin/discordgo"
 
@@ -44,14 +45,15 @@ func MessageReactionRemoveTeamUnassign(s *discordgo.Session, event *discordgo.Me
 			// Remove favourite team entry for given user from DB
 			repo := favouriteTeamsRepository.NewFavouriteTeamsRepository()
 			if err != nil {
-				fmt.Errorf("Could not retrieve favourite team entry from DB : %v", err)
+				fmt.Printf("Could not retrieve favourite team entry from DB : %v", err)
 			}
 			_, errDelete := repo.DeleteFavouriteTeam(userId, event.MessageReaction.Emoji.Name)
 			if errDelete != nil {
-				fmt.Errorf("Could not insert new favourite team entry into DB : %v", err)
+				fmt.Printf("Could not insert new favourite team entry into DB : %v", err)
 			}
 			// Send DM to user to confirm transaction
-			transactionMsg := fmt.Sprintf("Confirmation of removing %s from your favourite teams.", event.MessageReaction.Emoji.Name)
+			displayTeamName := strings.Replace(event.MessageReaction.Emoji.Name, "_", " ", -1)
+			transactionMsg := fmt.Sprintf("Confirmation of removing %s from your favourite teams.", displayTeamName)
 			errDm := utils.SendDmToUserFromMsgReactionRemove(s, event, userId, transactionMsg)
 			if errDm != nil {
 				fmt.Println("Error sending DM: ", errDm)

@@ -37,18 +37,18 @@ func sendTeamAssignMessages(session *discordgo.Session, channelId string) {
 	}
 
 	// Get all available leagues and teams
-	// and reactions to post in the channel
+	// and reaction image data to post in the channel
 	leagues := apiFootballClient.GetLeaguesForCountry("Romania", 1)
 	for index, league := range leagues {
 		teams := apiFootballClient.GetTeamsForLeague(league.Id, 2023, league.CountryName)
 		leagues[index].Teams = teams
 	}
 
-	// Step 1 - Send the league specific messages
 	reactionIdsByMessageId := make(map[string][]string) // keep track of the reactions under each league message
 	fmt.Println("Creating Guild reactions with teams from the given leagues...")
 	for _, league := range leagues {
 
+		// Step 1 - Send the league specific messages
 		messageToSend := fmt.Sprintf("## %s", league.Name) +
 			"\nReact to this message to pick your favourite teams from this league!"
 		msg, err := session.ChannelMessageSend(channelId, messageToSend)
@@ -58,7 +58,7 @@ func sendTeamAssignMessages(session *discordgo.Session, channelId string) {
 		}
 		logger.LogSentMessage("Ready", msg.Content)
 
-		// Step 2 - Get logos to create emojis
+		// Step 2 - Create available team logo reactions in the Discord server
 		for _, team := range league.Teams {
 			logger.LogCreateReaction("Ready", "Reaction "+team.DisplayName+" creating...")
 			emoji, err := utils.CreateGuildEmoji(session, globals.GuildId, team.Name, team.LogoBase64)
