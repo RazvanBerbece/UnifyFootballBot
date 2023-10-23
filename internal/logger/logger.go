@@ -4,6 +4,8 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+
+	"github.com/bwmarrin/discordgo"
 )
 
 func LogHandlerCall(handlerName string, filename string) {
@@ -56,7 +58,7 @@ func LogSentMessage(handlerName string, message string) {
 
 }
 
-func LogAddReaction(handlerName string, messageId string, emojiId string) {
+func LogAddReaction(handlerName string, emojiId string) {
 
 	// If the file and/or path doesn't exist, create, or append to the file
 	pathToLogfile := filepath.Join(".", "logs/")
@@ -72,7 +74,29 @@ func LogAddReaction(handlerName string, messageId string, emojiId string) {
 
 	log.SetOutput(file)
 
-	log.Printf("Handler %s added reaction with ID \"%s\" to message with ID %s", handlerName, emojiId, messageId)
+	log.Printf("Handler %s added reaction with ID \"%s\"", handlerName, emojiId)
+
+	log.SetOutput(os.Stderr)
+
+}
+
+func LogCreateReaction(handlerName string, emojiName string) {
+
+	// If the file and/or path doesn't exist, create, or append to the file
+	pathToLogfile := filepath.Join(".", "logs/")
+	err := os.MkdirAll(pathToLogfile, os.ModePerm)
+	if err != nil {
+		log.Fatal("Could not create filepath for created reactions log file. Err = ", err)
+	}
+	file, err := os.OpenFile("logs/created_reactions.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
+	if err != nil {
+		log.Fatal("Could not open log file for created reactions. Err = ", err)
+	}
+	defer file.Close()
+
+	log.SetOutput(file)
+
+	log.Printf("Handler %s created reaction with ID \"%s\"", handlerName, emojiName)
 
 	log.SetOutput(os.Stderr)
 
@@ -139,6 +163,28 @@ func LogCleanup(resource string) {
 	log.SetOutput(file)
 
 	log.Printf("Resource %s deleted", resource)
+
+	log.SetOutput(os.Stderr)
+
+}
+
+func LogRoleCreation(role *discordgo.Role) {
+
+	// If the file and/or path doesn't exist, create, or append to the file
+	pathToLogfile := filepath.Join(".", "logs/")
+	err := os.MkdirAll(pathToLogfile, os.ModePerm)
+	if err != nil {
+		log.Fatal("Could not create filepath for the role creation log file. Err = ", err)
+	}
+	file, err := os.OpenFile("logs/role_creation.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
+	if err != nil {
+		log.Fatal("Could not open log file for role creation. Err = ", err)
+	}
+	defer file.Close()
+
+	log.SetOutput(file)
+
+	log.Printf("Role with name %s; colour %d; has been created", role.Name, role.Color)
 
 	log.SetOutput(os.Stderr)
 

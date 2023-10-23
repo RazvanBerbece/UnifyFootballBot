@@ -25,5 +25,8 @@ var MySqlConnectionString = os.Getenv("UNIFYFOOTBALL_DB_CONNSTRING") // in forma
 var GuildId = os.Getenv("GUILD_ID") // the id of the server the bot is in
 var TeamAssignChannelId = os.Getenv("TEAM_ASSIGN_CHANNEL_ID")
 
+var RapidApiFootballKey = os.Getenv("RAPIDAPI_FOOTBALL_KEY")
+var RapidApiHost = os.Getenv("RAPIDAPI_HOST")
+
 // =============== RUNTIME VARS ===============
 var RegisteredCommands []*discordgo.ApplicationCommand

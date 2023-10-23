@@ -5,9 +5,11 @@ import (
 	"log"
 
 	"github.com/RazvanBerbece/UnifyFootballBot/internal/globals"
-	leagues "github.com/RazvanBerbece/UnifyFootballBot/internal/handlers/readyEvent/resources"
 	"github.com/RazvanBerbece/UnifyFootballBot/internal/logger"
+	"github.com/RazvanBerbece/UnifyFootballBot/internal/utils"
 	"github.com/bwmarrin/discordgo"
+
+	apiFootballClient "github.com/RazvanBerbece/UnifyFootballBot/internal/apis/api-football"
 )
 
 // Called once the Discord servers confirm a succesful connection.
@@ -35,21 +37,43 @@ func sendTeamAssignMessages(session *discordgo.Session, channelId string) {
 	}
 
 	// Get all available leagues and reactions to post in the channel
-	leagueMessages := leagues.GetLeaguesAsList()
+	leagues := apiFootballClient.GetLeaguesForCountry("Romania", 1)
+
+	// TODO: Configure roles for the available teams
 
 	// Step 1 - Send the messages
-	reactionIdsByMessageId := make(map[string][]string)
-	for _, message := range leagueMessages {
-		messageToSend := message.LeagueName + "\nReact to this message to get your roles!"
+	reactionIdsByMessageId := make(map[string][]string) // keep track of the reactions under each league message
+	fmt.Println("Creating Guild reactions with teams from the given leagues...")
+	for _, league := range leagues {
+
+		messageToSend := fmt.Sprintf("## %s", league.Name) +
+			"\nReact to this message to pick your favourite teams from this league!"
 		msg, err := session.ChannelMessageSend(channelId, messageToSend)
 		if err != nil {
 			log.Fatal("An error occured while sending a message. Err =", err)
+			return
 		}
 		logger.LogSentMessage("Ready", msg.Content)
-		reactionIdsByMessageId[msg.ID] = message.ReactionStrings
+
+		// Step 2 - Get logos to create emojis
+		teams := apiFootballClient.GetTeamsForLeague(league.Id, 2023, league.CountryName)
+		for _, team := range teams {
+			encodedImage, err := apiFootballClient.GetImageAsBase64FromUrl(team.LogoUrl)
+			if err != nil {
+				log.Fatalf("An error occured while downloading the logo for %s: %v", team.Name, err)
+				return
+			}
+			emoji, err := utils.CreateGuildEmoji(session, globals.GuildId, team.Name, encodedImage)
+			if err != nil {
+				log.Fatalf("An error occured while creating emojis: %v", err)
+				return
+			}
+			reactionIdsByMessageId[msg.ID] = append(reactionIdsByMessageId[msg.ID], fmt.Sprintf("<%s:%s>", emoji.Name, emoji.ID))
+			logger.LogCreateReaction("Ready", emoji.Name)
+		}
 	}
 
-	// Step 2 - React with the team logos
+	// Step 3 - React with the team logos
 	// For each message sent above
 	for k, v := range reactionIdsByMessageId {
 		messageId := k
@@ -61,7 +85,7 @@ func sendTeamAssignMessages(session *discordgo.Session, channelId string) {
 			if err != nil {
 				fmt.Printf("Error adding reaction with ID %s to message. Err = %s", emojiId, err)
 			} else {
-				logger.LogAddReaction("Ready", messageId, teamLogoFormatted)
+				logger.LogAddReaction("Ready", teamLogoFormatted)
 			}
 		}
 	}
